@@ -1,0 +1,181 @@
+<!DOCTYPE html> <!-- сообщает браузеру на каком стандарте HTML написан данный документ -->
+<html lang="en">  <!-- контейнер для всей html странице -->
+	<head> <!-- служебная информация для браузера и посковых машин -->
+		<meta charset="UTF-8">  <!-- кодировка страницы -->
+		<meta author="Alex"> <!-- Автор страницы -->
+		<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+		<title>Chat</title>
+		<link rel="stylesheet" href="css/style.css">
+		<!-- <link rel="stylesheet" href="js/main.js"> -->
+	</head>
+	<body> <!-- Информация, которую видит пользователь -->
+		<header>
+			
+		</header>
+
+		<template id="template-message">
+			<section class="box-message">
+				<div class="message-all">
+					<p>
+						Я: <span></span>
+					</p>
+					<p class="time-message">
+						**:**
+					</p>
+				</div>
+			</section>
+		</template>
+
+		<main>
+			<section class="main-container">
+				<div class="pannel-btn">
+					<button class="btn" id="settigns-chat"> Настройки</button>
+					<button class="btn btn-exit" id="login">Выйти</button>
+				</div>
+				<div class="main-message" id="message-container">
+					<section class="box-message">
+						<div class="message-all">
+							<p>
+								Я: <span>Добрый день!</span>
+							</p>
+							<p class="time-message">
+								18:45
+							</p>
+						</div>
+					</section>
+					
+					<section class="box-message">
+						<div class="message-all message-me">
+							<p>
+								Собеседник: <span>Добрый день!</span>
+							</p>
+							<p class="time-message">
+								18:46
+							</p>
+						</div>
+					</section>
+
+					<section class="box-message">
+						<div class="message-all">
+							<p>
+								Я: <span>Добрый день!</span>
+							</p>
+							<p class="time-message">
+								18:45
+							</p>
+						</div>
+					</section>
+					
+					<section class="box-message">
+						<div class="message-all message-me">
+							<p>
+								Собеседник: <span>Добрый день!</span>
+							</p>
+							<p class="time-message">
+								18:46
+							</p>
+						</div>
+					</section>
+
+					<section class="box-message">
+						<div class="message-all">
+							<p>
+								Я: <span>Добрый день!</span>
+							</p>
+							<p class="time-message">
+								18:45
+							</p>
+						</div>
+					</section>
+					
+					<section class="box-message backgr-message-noread">
+						<div class="message-all message-me">
+							<p>
+								Собеседник: <span>Добрый день!</span>
+							</p>
+							<p class="time-message">
+								18:46
+							</p>
+						</div>
+					</section>
+					
+					
+				</div>
+				<div class="send-message">
+					<form action="">
+						<input class="input-message" type="text" placeholder="сообщение..">
+						<button class="btn btn-send">-></button>
+					</form>	
+				</div>
+			</section>
+			
+			<dialog class="main-container-popup" id="avtorizationDialog">
+				<div class="main-container-popup2">
+					<div class="popup-head">
+						<p>Авторизация</p>
+						<div class="radio-btn">
+							<button class="btn-close" id="close-autorization"><img class = "icon-del-task" src="./img/close-icon.svg" alt="close task"></button>
+						</div>   
+					</div>
+					<div class="popup-autorization-input">
+						<label for=""> Почта:
+							<input class="input-mail-code" type="text">
+						</label>
+						<div class="btn-autorization-group">
+							<button class="btn btn-autorization" id="get-code">Получить код</button>
+							<button class="btn btn-autorization">Ввести код</button>
+						</div>
+					</div>
+				</div>
+			</dialog>
+			<!-- <section class="main-container-popup">
+				
+			</section> -->
+
+			
+			
+			<dialog class="main-container-popup" id="get-code-dialog"> 
+				<div class="main-container-popup2">
+					<div class="popup-head">
+						<p>Подтверждение</p>
+						<div class="radio-btn">
+							<button class="btn-close" id="close-get-code"><img class = "icon-del-task" src="./img/close-icon.svg" alt="close task"></button>
+						</div>   
+					</div>
+					<div class="popup-autorization-input">
+						<label for=""> Код:
+							<input class="input-mail-code" type="text">
+						</label>
+						<div class="btn-autorization-group">
+							<button class="btn btn-code">Войти</button>
+						</div>
+					</div>
+				</div>
+			</dialog>
+			<dialog class="main-container-popup" id="settigns-chat-dialog">
+				<div class="main-container-popup2">
+					<div class="popup-head">
+						<p>Настройки</p>
+						<div class="radio-btn">
+							<button class="btn-close" id="close-settigns-chat"><img class = "icon-del-task" src="./img/close-icon.svg" alt="close task"></button>
+						</div>   
+					</div>
+					<div class="popup-autorization-input">
+						<div>
+							<label for=""> Имя в чате:
+								<input class="input-name" type="text">
+								<button class="btn btn-send">-></button>
+							</label>	
+						</div>					
+					</div>
+				</div>
+			</dialog>
+
+			
+		</main>
+		<footer>
+			
+		</footer>
+		<script type="module" src="js/main.js"></script>	
+	</body>
+</html>

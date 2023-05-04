@@ -1,0 +1,272 @@
+/* все глобальные стили пишем вначале, а все что ниже это может переопределить */
+
+* {
+    /* стандартно у блочных блоков свойство box-sizig: content-box
+    и это значит задавая width, height мы задаем размер только содержимого
+    и добавив border, padding суммарно увеличит блок
+    Поэтому стоит переопределить свойство box-sizing: border-box
+    и при задании размера туда войдут как содержимое, так и рамки с padding */
+    box-sizing: border-box;
+    margin: 0;
+
+}
+/* Обнуляем отсупы во всем документе */
+body {
+    /* margin: 0; */
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    /* font-size: 22px;  */
+    /* font-weight: 400; */
+    /* line-height: 20px;  */
+    /* display: flex;
+    justify-content: center; */
+
+}
+
+/* ВЫРАВНИВАНИЕ ОКНА ЧАТА ПО ЦЕНТРУ ЧЕРЕЗ ФЛЕКСЫ РОДИТЕЛЯ НЕ РАБОТАЕТ ПО ВЕРТИХАЛИ ПОЧЕМУ-ТО */
+/* сделал ниже через позицию absolute для дочернего элемента */
+/* main {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}  */
+
+
+.main-container {
+    border: 2px solid black;
+    width: 320px;
+    height: 533px;
+    padding: 8px;   
+
+    /* выравнивание по центру окна */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.pannel-btn {
+    /* font-size: 22px; */
+    width: 100%;
+    height: 39px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0; 
+}
+
+.btn {
+    border: 1px solid black;
+    text-decoration: none; /* Убираем подчёркивание */ 
+    width: 98px;
+    height: 32px;
+    text-align: center;
+    color: #000000; /* черный цвет текста */
+    background-color: #fff;
+    font-size: 14px;
+}
+.btn-exit {
+    width: 66px;
+}
+
+.btn:hover {
+    color: #fff; 
+    background-color:  #000000;
+}
+
+.btn-send {
+    width: 29px;
+}
+
+.btn-autorization {
+    width: 120px;
+}
+
+.btn-code {
+    width: 62px;
+}
+
+.main-message {
+    width: 100%;
+    height: 437px;
+    border: 1px solid black;
+    position: relative;
+    /* чтобы сообщения не выходили за пределы блока, а появлялась прокрутка */
+    Overflow-y: auto;
+}
+
+.main-message p {
+    margin: 4px;
+    font-size: 16px;
+}
+.time-message {
+    color: gray;
+    text-align: right;
+}
+
+.message-all {
+    background-color: lightgrey; /*цвет доставленного сообщения*/
+    margin: 8px;
+    padding: 4px;
+    display: inline-block; /*размер блока по ширине контента*/
+    float: right;
+    max-width: 257px;
+}
+
+/*на основе message-my, переопределю некоторые параметры*/
+.message-me {
+    background-color: rgb(224, 232, 232); /*цвет недоставленного сообщения*/
+    float: left;
+}
+
+.box-message {
+    /* display: block; */
+    width: 273px;
+    /* height: 200px; */
+    min-height: 75px;
+    /* для переноса слов на новую строку (высота блока будет расти, а ширина нет) */
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.backgr-message-noread {
+    background-color: rgb(202, 211, 255, 0.2);
+}
+
+/* стилизуем скролл */
+/* Общие стили для скроллбара */
+::-webkit-scrollbar {
+    width: 8px; /* ширина скроллбара */
+  }
+  
+  /* Стили для "бегунка" скроллбара */
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* цвет "бегунка" */
+    border-radius: 8px; /* радиус закругления углов */
+  }
+  
+  /* Стили для трека скроллбара */
+  ::-webkit-scrollbar-track {
+    background-color: #f1f1f1; /* цвет трека */
+    border-radius: 8px; /* радиус закругления углов */
+  }
+
+.send-message {
+
+}
+
+.input-message {
+    /* border: 0px; если поставить любой бордер он вообще почему-то исчезает*/
+    margin-top: 8px;
+    width: 267px;
+    height: 32px;
+} 
+
+/* чтобы форма не выделялась рамкой при наведении и после постановки курсора */
+/* иначе щель между рамкой дива и стандартной рамкой формы */
+input:focus, textarea:focus, select:focus {
+    outline: none;
+}
+
+.main-container-popup {
+    border: 2px solid black;
+    width: 320px;
+    height: 533px;
+    background-color: rgba(0,0,0,0.5);
+    /* position: absolute;  */
+    padding: 0;
+    /* margin-left: auto;
+    margin-right: auto;*/
+    margin: auto;
+}
+
+.main-container-popup2 {
+    background-color: white;
+    border: 1px solid black;
+    width: 273px;
+    height: 319px;
+    margin-top: 106px;
+    margin-left: 22px;
+    padding: 14px; 
+}
+
+.popup-head p {
+    margin-top: 10px; 
+}
+
+.radio-btn {
+    display: flex;
+    align-items: center; /* выравнивание по вертикали */
+}
+
+.btn-close {
+    width: 22px;
+    height: 22px;
+    border: none;
+    /* можно задать или прозрачный фон или белый, но прозрачный надежнее  */
+    background: rgba(255, 255, 255, 0);
+    cursor: pointer;
+}
+
+.btn-close:hover {
+    transform: scale(1.3);
+}
+.btn-close:active {
+    transform: scale(1);
+}
+
+.popup-head{
+    display: flex;
+    justify-content: space-between;
+}
+
+.popup-autorization-input {
+    margin-top: 60px;
+}
+
+.input-mail-code {
+    /* border: 0px; если поставить любой бордер он вообще почему-то исчезает*/
+    width: 245px;
+    height: 32px;
+} 
+
+.input-name {
+    width: 207px;
+    height: 32px;
+}
+
+.btn-autorization-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 7px;
+}
+
+.popup-autorization-code {
+
+}
+
+.popup-settign {
+
+}
+
+
+/* иконка закрытия в css */
+/* + */
+/*
+position: absolute;
+width: 14px;
+height: 20.82px;
+
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 24px;
+line-height: 70%;*/
+/* or 17px */
+/*
+color: #000000;
+
+opacity: 0.45;
+transform: rotate(-45deg);*/
+
