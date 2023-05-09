@@ -12,8 +12,10 @@ function sendMessage(e) {
     //найти имя отправителя и установить имя отправителя
     
     cloneMessageTemplate.querySelector("#my-name").textContent = `${myNameServer}: `;
-    //найти введенное сообщение 
-    const inputMessage = INPUT.MESSAGE.value;
+    //найти введенное сообщение
+    //проверить на пустое сообщение, чтобы не отправлять пустое сообщение  
+    if (!checkValidMessage()) return;
+    const inputMessage = checkValidMessage();
     // находим тег span нашего клона шаблона и помещаем туда текст сообщения из формы
     cloneMessageTemplate.querySelector('#text-message').textContent = inputMessage;
     // Добавить новое сообщение в элемент
@@ -68,4 +70,11 @@ async function getHistoryMessage() {
     catch(error) {
         alert(`Ошибка: ${error.name} - ${error.message}`);
     }
+}
+
+function checkValidMessage() {
+    if (INPUT.MESSAGE.value === "") {
+        return false;
+    }
+    return INPUT.MESSAGE.value; 
 }

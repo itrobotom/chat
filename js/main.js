@@ -1,5 +1,5 @@
 import { POPUPS, BTN, INPUT } from './constants'
-import { setName } from './nameUsers'
+import { setName, getName } from './nameUsers'
 import { sendMessage, getHistoryMessage } from './message'
 import { saveCode, getCodeAutorization, getCodeCookie } from './token'
 import Cookies from 'js-cookie'
@@ -12,6 +12,7 @@ if(!getCodeCookie()){
     BTN.LOGIN.textContent = 'Войти';
     POPUPS.AUTORIZATION.showModal();
 } else {
+    getName(); //раз авторизованы, получаем имя с сервера
     getHistoryMessage(); //если мы авторизованы, значит грузим историю сообщений чата
 }
 

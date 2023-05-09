@@ -6,8 +6,9 @@ export { saveCode, getCodeAutorization, getCodeCookie }
 
 //ПО СУТИ ЭТО ФУНКЦИЯ АВТОРИЗАЦИИ, В КОНЦЕ МЫ ПОЛУЧАЕМ ИМЯ С СЕРВЕРА
 function saveCode() {
-    //сохраняем код в куках
-    const inputMailCodeValue = INPUT.TOKEN.value;
+    //сохраняем код в куках, если его ввели
+    if(!checkValidCode()) return; 
+    const inputMailCodeValue = checkValidCode();
     Cookies.set('autorization-token', inputMailCodeValue);
     INPUT.TOKEN.value = "";
     getName(); //сразу получить актульное имя с сервера (если нет нужды менять и не будем менять)
@@ -22,7 +23,8 @@ function getCodeCookie() {
 }
 
 async function getCodeAutorization() {
-    const email = INPUT.MAIL.value; //забираем почту из инпута
+    if (!checkValidMail()) return;
+    const email = checkValidMail(); //забираем почту из инпута
     //сделать валидацию почты, хотябы на пустое значение проверить
     try {
         const response = await fetch(URL.SERVER_USER ,{ 
@@ -46,4 +48,20 @@ async function getCodeAutorization() {
     catch(error) {
         alert(`Ошибка: ${error.name} - ${error.message}`);
     }
+}
+
+function checkValidMail() {
+    if (INPUT.MAIL.value === "") {
+        alert("Вы не ввели почту!")
+        return false;
+    }
+    return INPUT.MAIL.value; 
+}
+
+function checkValidCode() {
+    if (INPUT.TOKEN.value === "") {
+        alert("Вы не ввели токен!")
+        return false;
+    }
+    return INPUT.TOKEN.value; 
 }
