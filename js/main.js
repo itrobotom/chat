@@ -1,6 +1,6 @@
 import { POPUPS, BTN, INPUT } from './constants'
 import { setName } from './nameUsers'
-import { sendMessage } from './message'
+import { sendMessage, getHistoryMessage } from './message'
 import { saveCode, getCodeAutorization, getCodeCookie } from './token'
 import Cookies from 'js-cookie'
 
@@ -11,6 +11,8 @@ if(!getCodeCookie()){
     //меняем содержимое кнопки с "выйти" на "войти"
     BTN.LOGIN.textContent = 'Войти';
     POPUPS.AUTORIZATION.showModal();
+} else {
+    getHistoryMessage(); //если мы авторизованы, значит грузим историю сообщений чата
 }
 
 
@@ -50,21 +52,6 @@ BTN.CLOSE_SETTINGS_CHAT.addEventListener('click', function() {
 
 //вызываем функцию по клику btn или enter для добавления сообщения и в конце вызываем команду для прокрутки скролла к последнему нижнему сообщению
 BTN.SEND_MESSAGE.addEventListener("click", sendMessage);
-
-
-//при обновлении страницы запустить функцию получения имени с сервера
-//если есть в куках токен авторизации, то запрос на сервер пройдет, если же нет, то открыть окно для авторизации 
-//ведь мы не можем отправить сообщения на сервер
-//let myNameServer = "NoName"; 
-//getName();                
-
-
-
-
-/*function sendMail(e) {
-    e.preventDefault();
-    return inputMail = document.querySelector(".input-mail-code").value;
-}*/
 
 BTN.GET_CODE.addEventListener("click", getCodeAutorization);
 
