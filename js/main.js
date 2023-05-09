@@ -1,63 +1,81 @@
-const login = document.getElementById('login');
-const closeAutorization = document.getElementById('close-autorization');
-const avtorizationDialog = document.getElementById('avtorizationDialog');
+import { POPUPS, BTN, INPUT } from './constants'
+import { setName } from './nameUsers'
+import { sendMessage } from './message'
+import { saveCode, getCodeAutorization, getCodeCookie } from './token'
+import Cookies from 'js-cookie'
 
-login.addEventListener('click', function() {
-    avtorizationDialog.showModal();
+//1) запуск приложения, всплывает окно с авторизацией (если нет кода в куках, а если есть, сразу чат)
+// при этом раз есть код авторизации в куках, значит и имя уже задано, то есть открывать окно настроек не нужно
+// при этом при первом запуске приложения после получения кода имя пользователя чата = почта
+if(!getCodeCookie()){
+    //меняем содержимое кнопки с "выйти" на "войти"
+    BTN.LOGIN.textContent = 'Войти';
+    POPUPS.AUTORIZATION.showModal();
+}
+
+
+// если мы жмем кнопку авторизации, то удаляем токен, то есть выходим и меняем кнопку на "войти"
+BTN.LOGIN.addEventListener('click', function() {
+    POPUPS.AUTORIZATION.showModal();
+    Cookies.remove('autorization-token')
+    BTN.LOGIN.textContent = 'Войти';
 });
 
-closeAutorization.addEventListener('click', function() {
-    avtorizationDialog.close();
+BTN.CLOSE_AUTORIZATION.addEventListener('click', function() {
+    POPUPS.AUTORIZATION.close();
 });
 
-const getCode = document.getElementById('get-code');
-const closeGetCode = document.getElementById('close-get-code');
-const getCodeDialog = document.getElementById('get-code-dialog');
-
-getCode.addEventListener('click', function() {
-    getCodeDialog.showModal();
+//2) Нажимаем "ввести код"
+BTN.INPUT_CODE.addEventListener('click', function() {
+    POPUPS.AUTORIZATION.close();
+    POPUPS.INPUT_CODE.showModal();
+    if(getCodeCookie()){
+        INPUT.TOKEN.value = getCodeCookie();
+    }
 });
 
-closeGetCode.addEventListener('click', function() {
-    getCodeDialog.close();
+
+BTN.CLOSE_GET_CODE.addEventListener('click', function() {
+    POPUPS.INPUT_CODE.close();
 });
 
-const settignsChat = document.getElementById('settigns-chat');
-const closeSettignsChat = document.getElementById('close-settigns-chat');
-const settignsChatDialog = document.getElementById('settigns-chat-dialog');
-
-settignsChat.addEventListener('click', function() {
-    settignsChatDialog.showModal();
+BTN.SETTINGS_CHAT.addEventListener('click', function() {
+    POPUPS.SETTINGS_CHAT.showModal();
 });
 
-closeSettignsChat.addEventListener('click', function() {
-    settignsChatDialog.close();
+BTN.CLOSE_SETTINGS_CHAT.addEventListener('click', function() {
+    POPUPS.SETTINGS_CHAT.close();
 });
 
-const templateMessage = document.getElementById("template-message"); //найдем шаблон для сообщения в разметке 
 
 //вызываем функцию по клику btn или enter для добавления сообщения и в конце вызываем команду для прокрутки скролла к последнему нижнему сообщению
-const btnSendMessage = document.querySelector(".btn-send");
-btnSendMessage.addEventListener("click", addMessage);
+BTN.SEND_MESSAGE.addEventListener("click", sendMessage);
 
 
-function addMessage(e) {
+//при обновлении страницы запустить функцию получения имени с сервера
+//если есть в куках токен авторизации, то запрос на сервер пройдет, если же нет, то открыть окно для авторизации 
+//ведь мы не можем отправить сообщения на сервер
+//let myNameServer = "NoName"; 
+//getName();                
+
+
+
+
+/*function sendMail(e) {
     e.preventDefault();
-    //клонируем содержимое template
-    const cloneMessageTemlate = templateMessage.content.cloneNode(true);
-    //находим контейнер, в котором будут все наши сообщения 
-    const messageContainer = document.getElementById("message-container"); 
-    //найти введенное сообщение 
-    const inputMessage = document.querySelector(".input-message").value;
-    // находим тег span нашего клона шаблона и помещаем туда текст сообщения из формы
-    cloneMessageTemlate.querySelector('span').textContent = inputMessage;
-    // Добавить новое сообщение в элемент
-    messageContainer.append(cloneMessageTemlate);
-    //чистим поле от сообщения после отправки
-    document.querySelector(".input-message").value = "";
-    //прокручиваем скролл к самому нижнему сообщению при обновлении страницы или добавлении нового сообщения
-    /*метод scrollTop элемента messageContainer используется, чтобы установить вертикальное смещение 
-    содержимого на величину scrollHeight этого же элемента, которая соответствует 
-    полной высоте содержимого включая область, которая не помещается на экране.*/ 
-    messageContainer.scrollTop = messageContainer.scrollHeight;
-}
+    return inputMail = document.querySelector(".input-mail-code").value;
+}*/
+
+BTN.GET_CODE.addEventListener("click", getCodeAutorization);
+
+//сохраним введенный код в куки при клике на кнопку "войти" 
+//открывать окно ввода имени не будем, т.к. оно будет поддятигиваться с сервера последнее
+//при необходимости в настойки зайти можно и сменить имя
+BTN.INPUT_MAIL_CODE.addEventListener("click", saveCode);
+
+
+
+BTN.SET_NAME.addEventListener("click", setName)
+
+
+

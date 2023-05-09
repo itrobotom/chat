@@ -16,9 +16,10 @@
 		<template id="template-message">
 			<section class="box-message">
 				<div class="message-all">
-					<p>
-						Я: <span></span>
-					</p>
+					<span id="my-name">
+						Я: 
+					</span>
+					<span id="text-message"></span>
 					<p class="time-message">
 						**:**
 					</p>
@@ -79,9 +80,10 @@
 
 					<section class="box-message">
 						<div class="message-all">
-							<p>
-								Я: <span>Добрый день!</span>
-							</p>
+							<span>
+								Я: 
+							</span>
+							<span>Добрый день!!!</span>
 							<p class="time-message">
 								18:45
 							</p>
@@ -104,7 +106,7 @@
 				<div class="send-message">
 					<form action="">
 						<input class="input-message" type="text" placeholder="сообщение..">
-						<button class="btn btn-send">-></button>
+						<button class="btn btn-send" id="send-message">-></button>
 					</form>	
 				</div>
 			</section>
@@ -123,7 +125,7 @@
 						</label>
 						<div class="btn-autorization-group">
 							<button class="btn btn-autorization" id="get-code">Получить код</button>
-							<button class="btn btn-autorization">Ввести код</button>
+							<button class="btn btn-autorization" id="input-code">Ввести код</button>
 						</div>
 					</div>
 				</div>
@@ -134,7 +136,7 @@
 
 			
 			
-			<dialog class="main-container-popup" id="get-code-dialog"> 
+			<dialog class="main-container-popup" id="input-code-dialog"> 
 				<div class="main-container-popup2">
 					<div class="popup-head">
 						<p>Подтверждение</p>
@@ -144,10 +146,10 @@
 					</div>
 					<div class="popup-autorization-input">
 						<label for=""> Код:
-							<input class="input-mail-code" type="text">
+							<input class="input-mail-code" id="code-token" type="text">
 						</label>
 						<div class="btn-autorization-group">
-							<button class="btn btn-code">Войти</button>
+							<button class="btn btn-code" id = "send-code">Войти</button>
 						</div>
 					</div>
 				</div>
@@ -164,7 +166,7 @@
 						<div>
 							<label for=""> Имя в чате:
 								<input class="input-name" type="text">
-								<button class="btn btn-send">-></button>
+								<button class="btn btn-send" id="send-name">-></button>
 							</label>	
 						</div>					
 					</div>
