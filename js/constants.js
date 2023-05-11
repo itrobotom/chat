@@ -4,7 +4,8 @@ const URL = {
     SERVER: 'https://edu.strada.one/api',
     SERVER_USER: 'https://edu.strada.one/api/user',
     MYNAME: 'https://edu.strada.one/api/user/me',
-    HIST_MESSAGE: 'https://edu.strada.one/api/messages/' 
+    HIST_MESSAGE: 'https://edu.strada.one/api/messages/',
+    SOCKET: `wss://edu.strada.one/websockets?` 
 }
 
 const POPUPS = {

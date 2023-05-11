@@ -1,6 +1,6 @@
 import { POPUPS, BTN, INPUT } from './constants'
 import { setName, getName } from './nameUsers'
-import { sendMessage, getHistoryMessage } from './message'
+import { sendMessage, getHistoryMessage, focusMessage } from './message'
 import { saveCode, getCodeAutorization, getCodeCookie } from './token'
 import Cookies from 'js-cookie'
 
@@ -18,18 +18,18 @@ if(!getCodeCookie()){
 
 
 // если мы жмем кнопку авторизации, то удаляем токен, то есть выходим и меняем кнопку на "войти"
-BTN.LOGIN.addEventListener('click', function() {
+BTN.LOGIN.addEventListener('click', () => {
     POPUPS.AUTORIZATION.showModal();
     Cookies.remove('autorization-token')
     BTN.LOGIN.textContent = 'Войти';
 });
 
-BTN.CLOSE_AUTORIZATION.addEventListener('click', function() {
+BTN.CLOSE_AUTORIZATION.addEventListener('click', () => {
     POPUPS.AUTORIZATION.close();
 });
 
 //2) Нажимаем "ввести код"
-BTN.INPUT_CODE.addEventListener('click', function() {
+BTN.INPUT_CODE.addEventListener('click', () => {
     POPUPS.AUTORIZATION.close();
     POPUPS.INPUT_CODE.showModal();
     if(getCodeCookie()){
@@ -38,15 +38,15 @@ BTN.INPUT_CODE.addEventListener('click', function() {
 });
 
 
-BTN.CLOSE_GET_CODE.addEventListener('click', function() {
+BTN.CLOSE_GET_CODE.addEventListener('click', () => {
     POPUPS.INPUT_CODE.close();
 });
 
-BTN.SETTINGS_CHAT.addEventListener('click', function() {
+BTN.SETTINGS_CHAT.addEventListener('click', () => {
     POPUPS.SETTINGS_CHAT.showModal();
 });
 
-BTN.CLOSE_SETTINGS_CHAT.addEventListener('click', function() {
+BTN.CLOSE_SETTINGS_CHAT.addEventListener('click', () => {
     POPUPS.SETTINGS_CHAT.close();
 });
 
@@ -61,9 +61,10 @@ BTN.GET_CODE.addEventListener("click", getCodeAutorization);
 //при необходимости в настойки зайти можно и сменить имя
 BTN.INPUT_MAIL_CODE.addEventListener("click", saveCode);
 
-
-
 BTN.SET_NAME.addEventListener("click", setName)
+
+
+focusMessage(); 
 
 
 

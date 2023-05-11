@@ -1,33 +1,56 @@
 import { format } from 'date-fns'
 
-import { TEMPLATE_MESSAGE, TEMPLATE_MESSAGE_USER, MESSAGE_CONTAINER, INPUT, URL } from './constants'
-import { myNameServer } from './nameUsers'
+import { TEMPLATE_MESSAGE, MESSAGE_CONTAINER, INPUT, URL } from './constants'
+import { myNameServer, mailMy } from './nameUsers'
 import { getCodeCookie } from './token'
 
-export { sendMessage,  getHistoryMessage }
+export { sendMessage,  getHistoryMessage, focusMessage }
 
 function sendMessage(e) {
     e.preventDefault();
-    //клонируем содержимое template
-    const cloneMessageTemplate = TEMPLATE_MESSAGE.content.cloneNode(true);
-    //найти имя отправителя и установить имя отправителя
-    
-    cloneMessageTemplate.querySelector("#my-name").textContent = `${myNameServer}: `;
-    //найти введенное сообщение
-    //проверить на пустое сообщение, чтобы не отправлять пустое сообщение  
+    //проверить, не пустое ли сообщение вводится
     if (!checkValidMessage()) return;
-    const inputMessage = checkValidMessage();
-    // находим тег span нашего клона шаблона и помещаем туда текст сообщения из формы
-    cloneMessageTemplate.querySelector('#text-message').textContent = inputMessage;
-    // Добавить новое сообщение в элемент
-    MESSAGE_CONTAINER.append(cloneMessageTemplate);
-    //чистим поле от сообщения после отправки
-    INPUT.MESSAGE.value = "";
-    //прокручиваем скролл к самому нижнему сообщению при обновлении страницы или добавлении нового сообщения
-    /*метод scrollTop элемента MESSAGE_CONTAINER используется, чтобы установить вертикальное смещение 
-    содержимого на величину scrollHeight этого же элемента, которая соответствует 
-    полной высоте содержимого включая область, которая не помещается на экране.*/ 
-    MESSAGE_CONTAINER.scrollTop = MESSAGE_CONTAINER.scrollHeight;
+    const token = getCodeCookie();
+    //работа с вебсокетом
+    //открываем соединение
+    let socket = new WebSocket(`${URL.SOCKET}${token}`);
+
+    socket.onopen = function(e) {
+        alert("[open] Соединение установлено");
+        alert("Отправляем данные на сервер");
+        socket.send(JSON.stringify({ text: checkValidMessage() }));
+    };
+    
+
+    //принимаем сообщение
+    socket.onmessage = function(event) { 
+        //вызываем рендер сообщения
+        const textMessage = JSON.parse(event.data).text;
+        //найти время отправителя
+        const dateMessage = format(new Date(JSON.parse(event.data).createdAt),"HH:mm");
+        renderOneMessage(myNameServer, textMessage, dateMessage)
+        //чистим поле от сообщения после отправки
+        INPUT.MESSAGE.value = "";
+        //console.log(event.data);
+    };
+
+    socket.onclose = function(event) {
+        if (event.wasClean) {
+          alert(`[close] Соединение закрыто чисто, код=${event.code} причина=${event.reason}`);
+        } else {
+          // например, сервер убил процесс или сеть недоступна
+          // обычно в этом случае event.code 1006
+          alert('[close] Соединение прервано');
+        }
+      };
+      socket.onerror = function(error) {
+        alert(`[error]`);
+      };
+    
+    /*socket.onclose = () => {
+        websocketPermanentConnection()
+    }*/
+    
 }
 
 async function getHistoryMessage() {
@@ -57,29 +80,53 @@ async function getHistoryMessage() {
     }
 }
 
+function renderOneMessage(name, message, time, mailUser = mailMy) {
+    let cloneMessageTemplate = TEMPLATE_MESSAGE.content.cloneNode(true); 
+    // находим тег span нашего клона шаблона и помещаем туда текст сообщения из формы
+    cloneMessageTemplate.querySelector("#text-message").textContent = message;
+    //найти имя отправителя и установить в шаблон
+    cloneMessageTemplate.querySelector("#my-name").textContent = `${name}: `;
+    //найти врем отправителя и установить в шаблон
+    cloneMessageTemplate.querySelector(".time-message").textContent = time;
+    
+    //console.log(cloneMessageTemplate.querySelector('.message-all'));
+    console.log(`${mailMy} : ${mailUser}`);
+    //добавляем дополнительный класс сообщению, меняющий его стиль, если отправитель не я (любой другой пользователь)
+    if (mailMy !== mailUser) cloneMessageTemplate.querySelector('.message-all').classList.add('message-me');
+    // Добавить новое блок с сообщением в окно сообщений
+    MESSAGE_CONTAINER.append(cloneMessageTemplate);
+    //прокручиваем скролл к самому нижнему сообщению при обновлении страницы или добавлении нового сообщения
+    /*метод scrollTop элемента MESSAGE_CONTAINER используется, чтобы установить вертикальное смещение 
+    содержимого на величину scrollHeight этого же элемента, которая соответствует 
+    полной высоте содержимого включая область, которая не помещается на экране.*/
+    MESSAGE_CONTAINER.scrollTop = MESSAGE_CONTAINER.scrollHeight;
+}
+
 function renderHistoryMessage(jsonMessages) {
-    const allMessage = jsonMessages.messages;
-    allMessage.forEach(element => {
-        //console.log(element);
-        console.log(element.user.name);
-        console.log(element.text);
-        //клонируем содержимое template
-        const cloneMessageTemplate = TEMPLATE_MESSAGE_USER.content.cloneNode(true);
-        // находим тег span нашего клона шаблона и помещаем туда текст сообщения из формы
-        cloneMessageTemplate.querySelector("#text-message").textContent = element.text;
-        //найти имя отправителя и установить в шаблон
-        cloneMessageTemplate.querySelector("#my-name").textContent = `${element.user.name}: `;
-        //найти врем отправителя и установить в шаблон
-        cloneMessageTemplate.querySelector(".time-message").textContent = format(new Date(element.createdAt),"HH:mm");
-        // Добавить новое сообщение в элемент
-        MESSAGE_CONTAINER.append(cloneMessageTemplate);
-        MESSAGE_CONTAINER.scrollTop = MESSAGE_CONTAINER.scrollHeight;
+    const allMessage = jsonMessages.messages.reverse();
+
+    allMessage.forEach(element => {        
+        const mailUser = element.user.email; //узнаем почту каждого отправителя
+        const dataMessage = format(new Date(element.createdAt),"HH:mm")
+        renderOneMessage (element.user.name, element.text, dataMessage, element.user.email); 
     });
 }
+
 
 function checkValidMessage() {
     if (INPUT.MESSAGE.value === "") {
         return false;
     }
     return INPUT.MESSAGE.value; 
+}
+
+function focusMessage() {
+    //можно поставить не фон, а класс с бордером, например .focused { outline: 1px solid red; }
+    document.querySelector('.input-message').addEventListener("focus", function() {
+        document.querySelector('.input-message').classList.add('focus-input-mess');
+    });
+
+    document.querySelector('.input-message').addEventListener("blur", function() {
+        document.querySelector('.input-message').classList.remove('focus-input-mess');
+    });
 }

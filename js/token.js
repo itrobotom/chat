@@ -1,4 +1,4 @@
-import { URL, POPUPS, INPUT } from './constants'
+import { URL, INPUT } from './constants'
 import Cookies from 'js-cookie'
 import { getName } from './nameUsers'
 
