@@ -37,6 +37,11 @@ function sendMessage(e) {
     socket.onclose = function(event) {
         if (event.wasClean) {
           alert(`[close] Соединение закрыто чисто, код=${event.code} причина=${event.reason}`);
+          socket.onopen = function(e) {
+            alert("[open] Соединение установлено");
+            alert("Отправляем данные на сервер");
+            socket.send(JSON.stringify({ text: checkValidMessage() }));
+        };
         } else {
           // например, сервер убил процесс или сеть недоступна
           // обычно в этом случае event.code 1006
@@ -52,7 +57,7 @@ function sendMessage(e) {
     }*/
     
 }
-
+let jsonAllMessage;
 async function getHistoryMessage() {
     const token = getCodeCookie();
     try {
@@ -64,10 +69,13 @@ async function getHistoryMessage() {
             },
         });
         if (response.ok) {
-            let json = await response.json();
+            jsonAllMessage = await response.json();
             //console.log(`История 300 сообщений с сервера в json: ${JSON.stringify({json})}`);
-            console.log(json.messages);
-            renderHistoryMessage(json);       
+            console.log(jsonAllMessage.messages);
+            //вешаем событие при касании скролла вызываем рендер сообщений, причем диапазон сообщений будет каждый раз смещаться на 20
+            //счетчик вызовов функции надо тогда ввести?
+            //или по подсчету касаний скролла
+            renderHistoryMessage();       
         }
         else {
             console.log("Есть проблемы с получением истории сообщений!");
@@ -79,6 +87,7 @@ async function getHistoryMessage() {
         alert(`Ошибка: ${error.name} - ${error.message}`);
     }
 }
+
 
 function renderOneMessage(name, message, time, mailUser = mailMy) {
     let cloneMessageTemplate = TEMPLATE_MESSAGE.content.cloneNode(true); 
@@ -94,23 +103,68 @@ function renderOneMessage(name, message, time, mailUser = mailMy) {
     //добавляем дополнительный класс сообщению, меняющий его стиль, если отправитель не я (любой другой пользователь)
     if (mailMy !== mailUser) cloneMessageTemplate.querySelector('.message-all').classList.add('message-me');
     // Добавить новое блок с сообщением в окно сообщений
-    MESSAGE_CONTAINER.append(cloneMessageTemplate);
-    //прокручиваем скролл к самому нижнему сообщению при обновлении страницы или добавлении нового сообщения
-    /*метод scrollTop элемента MESSAGE_CONTAINER используется, чтобы установить вертикальное смещение 
-    содержимого на величину scrollHeight этого же элемента, которая соответствует 
-    полной высоте содержимого включая область, которая не помещается на экране.*/
-    MESSAGE_CONTAINER.scrollTop = MESSAGE_CONTAINER.scrollHeight;
+    MESSAGE_CONTAINER.prepend(cloneMessageTemplate);
+    
+
 }
 
-function renderHistoryMessage(jsonMessages) {
-    const allMessage = jsonMessages.messages.reverse();
+let countRender = 0;
 
-    allMessage.forEach(element => {        
-        const mailUser = element.user.email; //узнаем почту каждого отправителя
-        const dataMessage = format(new Date(element.createdAt),"HH:mm")
-        renderOneMessage (element.user.name, element.text, dataMessage, element.user.email); 
+function renderHistoryMessage() { 
+    const allMessage = jsonAllMessage.messages.reverse();
+    
+    console.log(allMessage); //Все 300 сообщений
+    //Выберем определенный диапазон ключей (по 20 штук из 300)
+    //console.log(Object.keys(allMessage));
+
+    // заведем счетчик вызова функции renderHistoryMessage, где при первом вызове выберем первые 20 свойств: finishObj = 300, starObj = finishObj - 20 = 280
+    // при втором вызове отнимаем по 20 к каждой, то есть starObj = 260, finishObj = 280
+    // делать проверку не меньше ли starObj 0 ключей объекта, если меньше, то starObj = 0 (то есть первое сообщение с объекта сервера)
+    const finishIndexObj = 300 - countRender * 20;
+    const startIndexObj = finishIndexObj - 20;
+    if(startIndexObj < 0) {
+        //alert("Это вся история чата"); //сделать вывод один раз, а то браузер зависает!!
+        return;
+    }
+    
+    const keys = Object.keys(allMessage).slice(startIndexObj, finishIndexObj);
+
+    //перебор элементов объекта только по выбранным ране ключам keys
+    keys.forEach(element => {
+        console.log(format(new Date(allMessage[element].createdAt),"HH:mm"));
+        const dataMessage = format(new Date(allMessage[element].createdAt),"HH:mm")
+        renderOneMessage (allMessage[element].user.name, allMessage[element].text, dataMessage, allMessage[element].user.email);
+
+        console.log(`Высота она с сообщениями1: ${MESSAGE_CONTAINER.scrollHeight}`);
+        
+        if (countRender === 1) { //или я отправил сообщение
+            //прокручиваем скролл к самому нижнему сообщению при обновлении страницы или добавлении нового сообщения
+            /*метод scrollTop элемента MESSAGE_CONTAINER используется, чтобы установить вертикальное смещение 
+            содержимого на величину scrollHeight этого же элемента, которая соответствует 
+            полной высоте содержимого включая область, которая не помещается на экране.
+            Кажную порцию сообщений мы смещаем вверх, чтобы увидеть нижнее, как только вертикальный экран наполнится*/
+            MESSAGE_CONTAINER.scrollTop = MESSAGE_CONTAINER.scrollHeight; //это надо сделать один раз при первой подгрузке с 280 по 300 или когда напечатаю свое сообщение и отправлю
+        } else {
+            MESSAGE_CONTAINER.scrollTop = MESSAGE_CONTAINER.scrollTop + 2; //чуть отступаем от верха, иначе счетчик сразу переполнится (как прижать бегунок к верху)
+        }
+      
     });
+    countRender += 1;
 }
+MESSAGE_CONTAINER.addEventListener('scroll', function(event) {
+    console.log(`Позиция верхней точки окна с сообщениям в пикселях: ${MESSAGE_CONTAINER.scrollTop}`);
+    console.log(`Высота: ${MESSAGE_CONTAINER.scrollHeight}`);
+    //console.log(`Текущие границы объекта: startIndexObj-${startIndexObj} : finishIndexObj-${finishIndexObj }`);
+    console.log(`Счетчик вызова функции: ${countRender}`);
+    //т.к. у нас MESSAGE_CONTAINER.scrollTop = MESSAGE_CONTAINER.scrollHeight; перемотка уходит вниз, то мы ждем пока MESSAGE_CONTAINER.scrollTop не станет 0
+    //если он будет 0, значит мы дошли до верха сообщений и пора выдать очередную порицию 20 сообщений
+    if(MESSAGE_CONTAINER.scrollTop === 0) {
+        //renderOneMessage (allMessage[element].user.name, allMessage[element].text, dataMessage, allMessage[element].user.email);
+        renderHistoryMessage();
+        
+    } 
+    console.log(`Высота она с сообщениями2: ${MESSAGE_CONTAINER.scrollHeight}`);
+})
 
 
 function checkValidMessage() {
