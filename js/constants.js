@@ -1,4 +1,4 @@
-export { URL, POPUPS, TEMPLATE_MESSAGE, TEMPLATE_MESSAGE_USER, BTN, MESSAGE_CONTAINER, INPUT}
+export { URL, POPUPS, TEMPLATE_MESSAGE, TEMPLATE_MESSAGE_USER, BTN, MESSAGE_CONTAINER, INPUT, ALL_ELEM_DOM}
 
 const URL = {
     SERVER: 'https://edu.strada.one/api',
@@ -33,6 +33,8 @@ const INPUT = {
     MY_NAME: document.querySelector(".input-name"),
     MESSAGE: document.querySelector(".input-message")
 }
+
+const ALL_ELEM_DOM = document.querySelectorAll(".box-message");
 
 const TEMPLATE_MESSAGE = document.getElementById("template-my-message"); //найдем шаблон для моего сообщения в разметке 
 
